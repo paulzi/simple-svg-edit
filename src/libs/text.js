@@ -337,9 +337,7 @@ function findAndSplitMultipleLines(node) {
             }
         }
         if (bound) {
-            if (prev !== null && bound.x <= prev.x && bound.y > prev.y && bound.width > 0) {
-                //console.log('insert br', child, bound.x, prev.x, bound.y, prev.y, bound.width, node);
-                //throw new Error('test');
+            if (prev !== null && bound.y > prev.y && bound.width > 0) {
                 node.insertBefore(createElement('br'), child);
             }
             prev = bound;
