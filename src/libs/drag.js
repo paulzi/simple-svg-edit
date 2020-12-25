@@ -5,6 +5,7 @@ import {pointCreate, pointDistance, pointGetCenter, pointApplyMatrix} from './po
 import {rectCreate} from './rect';
 import {matrixCreate, matrixGetTranformForElement} from './matrix';
 import {helperRemove, helperCreateByPoints} from './helper';
+import {setTransform} from './misc';
 
 // minify
 const doc = document;
@@ -53,7 +54,6 @@ function onMouseMove(e) {
 function onMouseUp(e) {
     current && end(e);
 }
-
 
 /**
  * Start drag
@@ -121,7 +121,7 @@ function move(e) {
     editor.selection.forEach(item => {
         let matrix = current.matrix.get(item);
         matrix = matrixCreate().translateSelf(local.width, local.height).multiplySelf(matrix);
-        item.style.transform = matrix.toString();
+        setTransform(item, matrix);
     });
     let matrix = matrixCreate().translateSelf(dx, dy);
     transformHelper(editor, matrix);
@@ -149,7 +149,7 @@ function rotate(e) {
             .rotateSelf(-a * 180 / Math.PI)
             .translateSelf(-cl.x, -cl.y)
             .multiplySelf(matrix);
-        item.style.transform = matrix.toString();
+        setTransform(item, matrix);
     });
     let matrix = matrixCreate()
         .translateSelf(cr.x, cr.y)
@@ -178,7 +178,7 @@ function scale(e) {
             .scaleSelf(scale)
             .translateSelf(-cl.x, -cl.y)
             .multiplySelf(matrix);
-        item.style.transform = matrix.toString();
+        setTransform(item, matrix);
     });
     let matrix = matrixCreate()
         .translateSelf(cr.x, cr.y)

@@ -38,9 +38,10 @@ export function helperRemove(editor) {
  * Get helper corner points for item
  * @param {Editor} editor 
  * @param {SVGElement} item
+ * @param {SVGElement} [boundItem]
  */
-export function helperGetPointsForItem(editor, item) {
-    let bound = item.getBBox();
+export function helperGetPointsForItem(editor, item, boundItem) {
+    let bound = (boundItem || item).getBBox();
     let points = rectCorners(bound);
     let matrix = matrixGetTranformForElement(item);
     points.forEach((point, i) => {

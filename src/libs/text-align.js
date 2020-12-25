@@ -1,5 +1,6 @@
 import eventContext from './event-context';
 import {matrixGetTranformForElement} from './matrix';
+import {setTransform} from './misc';
 import {Editor, settings} from '../classes/Editor';
 
 // minify
@@ -69,8 +70,7 @@ function onTextApply(e) {
         let width = text.getBBox().width;
         let fx = mapWidth[align] - mapWidth[anchor];
         text.style.textAnchor = align;
-        text.style.transform = matrixGetTranformForElement(text)
-            .translateSelf(fx * width, 0)
-            .toString();
+        let matrix = matrixGetTranformForElement(text).translateSelf(fx * width, 0);
+        setTransform(text, matrix);
     }
 }

@@ -95,7 +95,8 @@ Special css-classes:
 
 Extend `Editor`:
 
-- `foreign {SVGElement}` - `<foreignObject>` element of WYSIWYG text editor;
+- `foreign {SVGElement}` - `<g>` element of WYSIWYG text editor;
+- `foreignObject {SVGElement}` - `<foreignObject>` element of WYSIWYG text editor;
 - `text {SVGElement}` - current editable `<text>`;
 - `textarea {Element}` - `contentEditable` element in `<foreignObject>`.
 

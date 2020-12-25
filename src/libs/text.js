@@ -1,5 +1,5 @@
 import eventContext from './event-context';
-import {createElement, listToArray} from './misc';
+import {createElement, setTransform, listToArray} from './misc';
 import {helperRemove, helperGetPointsForItem} from './helper';
 import {pointCreate, pointCenter, pointDistance} from './point';
 import {unitsRootToViewport} from './units';
@@ -7,6 +7,8 @@ import {Editor, settings} from '../classes/Editor';
 
 // minify
 const doc = document;
+
+const isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1;
 
 /**
  * Register drag event listener
@@ -107,7 +109,8 @@ function editInSelection(editor) {
 function foreignObjectCreate(editor, node) {
     const base = settings.base;
     let bound = node.getBBox();
-    let foreign = createElement('foreignObject', true, [`${base}__foreign`]);
+    let foreignGroup = createElement('g', true, [`${base}__foreign`]);
+    let foreign = createElement('foreignObject', true);
     ['x', 'y', 'width', 'height'].forEach(prop => {
         foreign.setAttribute(prop, bound[prop]);
     });
@@ -129,16 +132,17 @@ function foreignObjectCreate(editor, node) {
         }
     });
     
+    foreignGroup.appendChild(foreign);
     foreign.appendChild(textarea);
-    node.insertAdjacentElement('afterend', foreign);
+    node.insertAdjacentElement('afterend', foreignGroup);
     removeManualBr(textarea);
-    foreign.style.transform = style.transform;
+    setTransform(foreignGroup, style.transform);
     node.style.display = 'none';
     selectAll(textarea);
     
-    editor.foreign  = foreign;
-    editor.textarea = textarea;
-    editor.text     = node;
+    editor.foreign       = foreign;
+    editor.textarea      = textarea;
+    editor.text          = node;
     editor.triggerEvent('TextEdit');
 }
 
@@ -150,13 +154,14 @@ function foreignObjectApply(editor) {
     let foreign  = editor.foreign;
     let textarea = editor.textarea;
     let text     = editor.text;
-    foreign.style.transform = '';
+    let foreignGroup = foreign.parentNode;
+    setTransform(foreignGroup, '');
     findAndSplitMultipleLines(textarea);
     convertBrToDiv(textarea);
     convertHtmlToSvgText(text, textarea);
     text.style.display = '';
     editor.triggerEvent('TextApply');
-    foreign.parentNode.removeChild(foreign);
+    foreignGroup.parentNode.removeChild(foreignGroup);
     editor.foreign  = null;
     editor.textarea = null;
     editor.text     = null;
@@ -303,15 +308,25 @@ function removeManualBr(node) {
  */
 function findAndSplitMultipleLines(node) {
     if (node.nodeType === Node.TEXT_NODE) {
-        let rects = getTextClientRects(node);
-        if (rects.length > 1) {
+        let isSplit = false;
+        let y = null;
+        listToArray(getTextClientRects(node)).forEach(rect => {
+            if (y !== null && rect.y > y) {
+                isSplit = true;
+            }
+            y = rect.y;
+        });
+        if (isSplit) {
             splitTextByLines(node);
         }
     }
+    listToArray(node.childNodes).forEach((child) => {
+        findAndSplitMultipleLines(child);
+    });
     let prev = null;
-    listToArray(node.childNodes).forEach((child, i) => {
+    listToArray(node.childNodes).forEach((child) => {
         let bound;
-        if (child.nodeType === Node.TEXT_NODE) {
+        if (child.nodeType === Node.TEXT_NODE && child.nodeValue.trim() !== '') {
             bound = getTextClientRects(child)[0];
         }
         if (child.nodeType === Node.ELEMENT_NODE) {
@@ -323,11 +338,12 @@ function findAndSplitMultipleLines(node) {
         }
         if (bound) {
             if (prev !== null && bound.x <= prev.x && bound.y > prev.y && bound.width > 0) {
+                //console.log('insert br', child, bound.x, prev.x, bound.y, prev.y, bound.width, node);
+                //throw new Error('test');
                 node.insertBefore(createElement('br'), child);
             }
             prev = bound;
         }
-        findAndSplitMultipleLines(child);
     });
 }
 
@@ -405,7 +421,10 @@ function selectAll(node) {
  * @param {Editor} editor 
  */
 function textHelperCreate(editor) {
-    let points = editor.helperPoints = helperGetPointsForItem(editor, editor.foreign);
+    let foreign = editor.foreign;
+    let foreignGroup = foreign.parentNode;
+    let boundItem = isSafari ? foreignGroup : foreign;
+    let points = editor.helperPoints = helperGetPointsForItem(editor, foreignGroup, boundItem);
     textHelperCreateByPoints(editor, points);
 }
 

@@ -19,6 +19,17 @@ export function createElement(tag, isSvg, cls) {
 }
 
 /**
+ * Apply transform to element
+ * @param {Element} item 
+ * @param {String|DOMMatrix} value 
+ */
+export function setTransform(item, value) {
+    value = value.toString();
+    item.style.transform = value;
+    item.setAttribute('transform', value !== 'none' ? value : ''); // safari fix
+}
+
+/**
  * @param {NodeList} list
  * @returns {Array}
  */
