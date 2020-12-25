@@ -2,6 +2,8 @@
 
 Simple SVG editor - move, scale, rotate elements and text edit.
 
+[DEMO](https://paulzi.github.io/simple-svg-edit/index.html)
+
 ## Usage
 
 If you are using build system, include the functionality you need from folder `features`, and start edit svg:
