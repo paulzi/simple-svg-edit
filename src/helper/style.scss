@@ -1,0 +1,56 @@
+$base: '.sse' !default;
+$cl-primary: #655be2 !default;
+$cl-white: #fff !default;
+
+#{$base} {
+    &__textarea {
+        outline: none;
+    }
+
+    &__rect {
+        stroke: $cl-primary;
+        fill: transparent;
+        cursor: move;
+    }
+
+    &__act {
+        transform-box: fill-box;
+        transform-origin: center;
+        transition: transform 0.2s;
+
+        circle {
+            fill: $cl-primary;
+        }
+
+        &:hover {
+            transform: scale(2);
+        }
+
+        &._delete, &._text {
+            cursor: pointer;
+        }
+    }
+
+    &__icon {
+        fill: $cl-white;
+    }
+
+    &__foreign {
+        overflow: visible;
+    }
+
+    &__textarea {
+        display: block;
+        line-height: 1;
+    }
+
+    &__helper {
+        &._text {
+            .sse {
+                &__rect {
+                    fill: none;
+                }
+            }
+        }
+    }
+}

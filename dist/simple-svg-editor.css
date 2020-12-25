@@ -1,0 +1,35 @@
+.sse__textarea {
+  outline: none;
+}
+.sse__rect {
+  stroke: #655be2;
+  fill: transparent;
+  cursor: move;
+}
+.sse__act {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.2s;
+}
+.sse__act circle {
+  fill: #655be2;
+}
+.sse__act:hover {
+  transform: scale(2);
+}
+.sse__act._delete, .sse__act._text {
+  cursor: pointer;
+}
+.sse__icon {
+  fill: #fff;
+}
+.sse__foreign {
+  overflow: visible;
+}
+.sse__textarea {
+  display: block;
+  line-height: 1;
+}
+.sse__helper._text .sse__rect {
+  fill: none;
+}

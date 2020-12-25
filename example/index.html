@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru-RU">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Simple SVG editor</title>
+    <style>
+    *, *:before, *:after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font: 1rem/normal 'Arial', sans-serif;
+      color: #111;
+    }
+    
+    svg {
+      width: 100%;
+      height: 100vh;
+      vertical-align: top;
+    }
+    </style>
+    <link href="../dist/simple-svg-editor.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="root">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <circle cx="150" cy="150" r="100"></circle>
+        <polygon points="380 38.52 403.36 85.85 455.59 93.44 417.8 130.28 426.72 182.3 380 157.74 333.28 182.3 342.2 130.28 304.41 93.44 356.64 85.85 380 38.52"></polygon>
+        <polygon points="111 343.52 134.36 390.85 186.59 398.44 148.8 435.28 157.72 487.3 111 462.74 64.28 487.3 73.2 435.28 35.41 398.44 87.64 390.85 111 343.52"></polygon>
+        <text x="100" y="300" style="font-size:48px;font-family:Arial">
+          <tspan>Lorem</tspan>
+          <tspan fill="#f00">
+            <tspan>ipsum dolor</tspan>
+            <tspan x="100" dy="1em">sit amet,</tspan>
+            <tspan x="100" dy="1em">
+              <tspan fill="#0f0">consectetur</tspan>
+            </tspan>
+          </tspan>
+        </text>
+      </svg>
+    </div>
+    <script src="../dist/simple-svg-editor.js"></script>
+    <script>new SimpleSvgEditor(document.querySelector('svg'));</script>
+  </body>
+</html>
