@@ -1,0 +1,32 @@
+$base: '.sse' !default;
+
+#{$base} {
+    &__bottom {
+        transform: translateY(-40px) translate(50%, 100%);
+    }
+
+    &__act {
+        &._insert, &._insert-image, &._insert-text {
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+    }
+
+    &__bottom-image, &__bottom-text {
+        visibility: hidden;
+        transition: transform 0.2s;
+    }
+
+    &__bottom:focus-within & {
+        &__bottom-image {
+            transform: translate(-30px, -65px);
+            visibility: visible;
+        }
+
+        &__bottom-text {
+            transform: translate(30px, -65px);
+            visibility: visible;
+        }
+    }
+}

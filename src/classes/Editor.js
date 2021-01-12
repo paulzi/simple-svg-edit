@@ -85,7 +85,8 @@ function onClick(e) {
  * @param {MouseEvent|TouchEvent} e 
  */
 function onMouseDown(e) {
-    const sel = '.' + settings.base;
+    const base = settings.base;
+    const sel  = '.' + base;
     let el = eventContext(e, sel);
     let editor = el && Editor.getInstance(el);
     if (editor) {
@@ -94,8 +95,15 @@ function onMouseDown(e) {
             if (target.nodeName === 'tspan') {
                 target = target.closest('text');
             }
-            if (!target.closest('foreignObject')) {
-                editor.selectElement(target);
+            let attr = `data-${base}-editable`;
+            let editable = target.closest(`[${attr}]`);
+            editable = editable && editable.getAttribute(attr);
+            if (editable === 'true' || editable === '1') {
+                if (!target.closest('foreignObject')) {
+                    editor.selectElement(target);
+                }
+            } else {
+                editor.selectElement(null);
             }
         }
         if (target === el) {
@@ -117,14 +125,16 @@ function onResize() {
 export class Editor {
     /**
      * @param {HTMLElement} el
+     * @param {Object} params
      */
-    constructor(el) {
+    constructor(el, params = {}) {
         prepareSvg(this, el);
         instances.set(this.root, this);
         this.helper    = null;
         this.selection = [];
         registerListeners();
         refreshRootViewBox(this.root);
+        triggerEvent(this, 'Inited', params);
     }
 
     /**

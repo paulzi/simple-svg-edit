@@ -17,6 +17,7 @@ $cl-white: #fff !default;
         transform-box: fill-box;
         transform-origin: center;
         transition: transform 0.2s;
+        cursor: pointer;
 
         circle {
             fill: $cl-primary;
@@ -26,8 +27,8 @@ $cl-white: #fff !default;
             transform: scale(2);
         }
 
-        &._delete, &._text {
-            cursor: pointer;
+        &._rotate, &._scale {
+            cursor: default;
         }
     }
 

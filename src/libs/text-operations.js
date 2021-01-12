@@ -1,11 +1,7 @@
 import {createElement, listToArray} from './misc';
 import {Editor} from '../classes/Editor';
 
-/**
- */
-export function textOperationsRegister() {
-    Editor.prototype.textSetStyle = setStyle;
-}
+Editor.prototype.textSetStyle = setStyle;
 
 /**
  * @returns {Element[]}

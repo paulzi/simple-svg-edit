@@ -1,3 +1,1 @@
-import {textOperationsRegister} from '../src/libs/text-operations';
-
-textOperationsRegister();
+import '../src/libs/text-operations';
