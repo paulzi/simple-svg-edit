@@ -40,7 +40,7 @@ function onInited(e) {
     let editor = params.editor;
     if (params.insertWidget !== false) {
         let widget = createElement('g', true, [`${base}__bottom`]);
-        widget.innerHTML = `
+        let html = `
             <g class="${base}__bottom-image">
                 <g class="${base}__act _insert-image ${base}__insert-image" tabindex="0">
                     <circle r="20"/>
@@ -64,6 +64,27 @@ function onInited(e) {
                 </g>
             </g>
         `;
+        if (editor.historyPush) {
+            html += `
+                <g class="${base}__bottom-undo">
+                    <g class="${base}__act _undo ${base}__undo" tabindex="0">
+                        <circle r="16"/>
+                        <g class="${base}__icon">
+                            <path d="M7,2a.51.51,0,0,1-.7-.11S3.3-2.27.05-2.27C-2.38-2.27-4.68,0-5.7,1.18h3.38a.5.5,0,0,1,.5.5.5.5,0,0,1-.5.5H-6.77a.5.5,0,0,1-.5-.5V-2.77a.5.5,0,0,1,.5-.5.5.5,0,0,1,.5.5V.32C-5.09-1-2.66-3.27.05-3.27c3.76,0,7,4.34,7.08,4.52A.51.51,0,0,1,7,2Z"/>
+                        </g>
+                    </g>
+                </g>
+                <g class="${base}__bottom-redo">
+                    <g class="${base}__act _redo ${base}__redo" tabindex="0">
+                        <circle r="16"/>
+                        <g class="${base}__icon">
+                            <path d="M7.28-2.72V1.71a.5.5,0,0,1-.5.5H2.35a.5.5,0,0,1,0-1H5.71C4.7.05,2.41-2.22,0-2.22c-3.23,0-6.21,4.05-6.24,4.09a.51.51,0,0,1-.7.11.51.51,0,0,1-.11-.7c.13-.18,3.31-4.5,7.05-4.5C2.69-3.22,5.1-1,6.28.35V-2.72a.5.5,0,0,1,.5-.5A.5.5,0,0,1,7.28-2.72Z"/>
+                        </g>
+                    </g>
+                </g>
+            `;
+        }
+        widget.innerHTML = html;
         editor.helpers.appendChild(widget);
     }
 }

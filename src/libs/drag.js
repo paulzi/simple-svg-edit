@@ -100,6 +100,14 @@ function drag(e) {
 function end(e) {
     let editor = current.editor;
     current.operation(e, current);
+    if (editor.historyPush && current.matrix) {
+        editor.historyPush({
+            undo,
+            redo,
+            prev: current.matrix,
+            next: getSelectionTransformMap(),
+        });
+    }
     let prevented = editor.triggerEvent('DragEnd', {
         event: e,
         operation: current.operation,
@@ -188,15 +196,22 @@ function scale(e) {
 }
 
 /**
+ * Return map of transform matrix for selection
+ */
+function getSelectionTransformMap() {
+    let map = new Map();
+    current.editor.selection.forEach(item => {
+        map.set(item, matrixGetTranformForElement(item));
+    });
+    return map;
+}
+
+/**
  * Save transform on drag start
  */
 function saveMatrix() {
     if (!current.matrix) {
-        let map = new Map();
-        current.editor.selection.forEach(item => {
-            map.set(item, matrixGetTranformForElement(item));
-        });
-        current.matrix = map;
+        current.matrix = getSelectionTransformMap();
     }
 }
 
@@ -212,4 +227,28 @@ function transformHelper(editor, matrix) {
         points[i] = pointApplyMatrix(point, matrix);
     });
     helperCreateByPoints(editor, points);
+}
+
+/**
+ * Apply drag undo
+ * @param {Editor} editor
+ * @param {Object} data 
+ */
+function undo(editor, data) {
+    data.prev.forEach((matrix, item) => {
+        setTransform(item, matrix);
+    });
+    editor.refreshHelper();
+}
+
+/**
+ * Apply drag redo
+ * @param {Editor} editor
+ * @param {Object} data 
+ */
+function redo(editor, data) {
+    data.next.forEach((matrix, item) => {
+        setTransform(item, matrix);
+    });
+    editor.refreshHelper();
 }

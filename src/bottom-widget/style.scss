@@ -1,4 +1,6 @@
 $base: '.sse' !default;
+$cl-primary: #655be2 !default;
+$cl-white: #fff !default;
 
 #{$base} {
     &__bottom {
@@ -6,9 +8,19 @@ $base: '.sse' !default;
     }
 
     &__act {
-        &._insert, &._insert-image, &._insert-text {
+        &._insert, &._insert-image, &._insert-text, &._undo, &._redo {
             &:hover {
                 transform: scale(1.1);
+            }
+        }
+
+        &._undo, &._redo {
+            circle {
+                fill: $cl-white;
+            }
+
+            #{$base}__icon {
+                fill: $cl-primary;
             }
         }
     }
@@ -16,6 +28,14 @@ $base: '.sse' !default;
     &__bottom-image, &__bottom-text {
         visibility: hidden;
         transition: transform 0.2s;
+    }
+
+    &__bottom-undo {
+        transform: translateX(-108px);
+    }
+
+    &__bottom-redo {
+        transform: translateX(108px);
     }
 
     &__bottom:focus-within & {

@@ -154,6 +154,7 @@ function foreignObjectApply(editor) {
     let foreign  = editor.foreign;
     let textarea = editor.textarea;
     let text     = editor.text;
+    let prev     = text.innerHTML;
     let foreignGroup = foreign.parentNode;
     setTransform(foreignGroup, '');
     findAndSplitMultipleLines(textarea);
@@ -165,6 +166,10 @@ function foreignObjectApply(editor) {
     editor.foreign  = null;
     editor.textarea = null;
     editor.text     = null;
+    let next = text.innerHTML;
+    if (editor.historyPush && prev !== next) {
+        editor.historyPush({undo, redo, text, prev, next});
+    }
 }
 
 /**
@@ -468,4 +473,24 @@ function dragTextWidth(e, current) {
     }
     editor.foreign.setAttribute('width', current.initialWidth * scale);
     textHelperUpdate(editor);
+}
+
+/**
+ * Apply drag undo
+ * @param {Editor} editor
+ * @param {Object} data 
+ */
+function undo(editor, data) {
+    data.text.innerHTML = data.prev;
+    editor.refreshHelper();
+}
+
+/**
+ * Apply drag redo
+ * @param {Editor} editor
+ * @param {Object} data 
+ */
+function redo(editor, data) {
+    data.text.innerHTML = data.next;
+    editor.refreshHelper();
 }
