@@ -9,16 +9,32 @@ import {Editor} from '../classes/Editor';
 Editor.prototype.insertImageUrl = function(url, params = {}) {
     let editor = this;
     let image = createElement('image', true);
-    image.setAttribute('href', url);
-    ['x', 'y', 'width', 'height'].forEach(attr => {
-        if (params[attr] !== undefined) {
-            image.setAttribute(attr, params[attr]);
+    image.onload = function() {
+        ['x', 'y', 'width', 'height'].forEach(attr => {
+            if (params[attr] !== undefined) {
+                image.setAttribute(attr, params[attr]);
+            }
+        });
+        let context = params.context || editor.svg;
+        let beforeInsert = params.beforeInsert;
+        beforeInsert && beforeInsert(image, context, params);
+        context.appendChild(image);
+        let bound = params.bound;
+        if (bound) {
+            let rect = image.getBBox();
+            let scale = Math.min(bound.width / rect.width, bound.height / rect.height);
+            let w = rect.width  * scale;
+            let h = rect.height * scale;
+            let x = bound.x + (bound.width  - w) / 2;
+            let y = bound.y + (bound.height - h) / 2;
+            image.setAttribute('x',      x);
+            image.setAttribute('y',      y);
+            image.setAttribute('width',  w);
+            image.setAttribute('height', h);
         }
-    });
-    let context = params.context || editor.svg;
-    let beforeInsert = params.beforeInsert;
-    beforeInsert && beforeInsert(image, context, params);
-    context.appendChild(image);
+        editor.selectElement(image);
+    };
+    image.setAttribute('href', url);
     return image;
 };
 

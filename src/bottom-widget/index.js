@@ -25,9 +25,9 @@ function onClick(e) {
     let editor = el && Editor.getInstance(el);
     if (editor) {
         el = eventContext(e, `${sel}__insert-text`);
-        el && editor.insertText('text', {context: editor.svg.querySelector(sel + '__area')});
+        el && editor.insertText("text", findArea(sel, editor));
         el = eventContext(e, `${sel}__insert-image`);
-        el && editor.insertImageUpload({context: editor.svg.querySelector(sel + '__area')});
+        el && editor.insertImageUpload(findArea(sel, editor));
     }
 }
 
@@ -66,4 +66,18 @@ function onInited(e) {
         `;
         editor.helpers.appendChild(widget);
     }
+}
+
+/**
+ * 
+ * @param {String} sel 
+ * @param {Editor} editor 
+ * @returns {Object}
+ */
+function findArea(sel, editor) {
+    let zone = editor.svg.querySelector(sel + '__area-zone');
+    return {
+        context: editor.svg.querySelector(sel + '__area'),
+        bound:   zone && zone.getBBox(),
+    };
 }

@@ -20,9 +20,23 @@ Editor.prototype.insertText = function(text, params = {}) {
             element.appendChild(document.createTextNode(line));
         }
     });
-    let context = params.context || editor.svg;
     element.setAttribute('x', params.x || 0);
     element.setAttribute('y', params.y || 0);
+    let context = params.context || editor.svg;
+    let beforeInsert = params.beforeInsert;
+    beforeInsert && beforeInsert(image, context, params);
     context.appendChild(element);
+    let bound = params.bound;
+    if (bound) {
+        let rect = element.getBBox();
+        let x = bound.x + (bound.width  - rect.width)  / 2;
+        let y = bound.y + (bound.height - rect.height) / 2;
+        element.setAttribute('x', x);
+        element.setAttribute('y', y);
+        element.querySelectorAll('tspan').forEach(tspan => {
+            tspan.setAttribute('x', x);
+        });
+    }
+    editor.selectElement(element);
     return element;
 };
