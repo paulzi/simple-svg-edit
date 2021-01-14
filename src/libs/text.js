@@ -11,6 +11,20 @@ const doc = document;
 const isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1;
 
 /**
+ * @param {SVGTextElement} element 
+ * @param {String} text 
+ */
+Editor.prototype.textSet = function(element, text) {
+    let prev = element.innerHTML;
+    textSet(element, text);
+    let next = element.innerHTML;
+    this.refreshHelper();
+    if (this.historyPush && prev !== next) {
+        this.historyPush({undo, redo, text: element, prev, next});
+    }
+}
+
+/**
  * Register drag event listener
  */
 export function textRegister() {
@@ -473,6 +487,26 @@ function dragTextWidth(e, current) {
     }
     editor.foreign.setAttribute('width', current.initialWidth * scale);
     textHelperUpdate(editor);
+}
+
+/**
+ * @param {SVGTextElement} element
+ * @param {String} text 
+ */
+export function textSet(element, text) {
+    let x = element.getAttribute('x');
+    element.innerHTML = '';
+    text.split("\n").forEach((line, i) => {
+        if (i > 0) {
+            let tspan = createElement('tspan', true);
+            tspan.textContent = line;
+            tspan.setAttribute('x', x);
+            tspan.setAttribute('dy', '1em');
+            element.appendChild(tspan);
+        } else {
+            element.appendChild(doc.createTextNode(line));
+        }
+    });
 }
 
 /**

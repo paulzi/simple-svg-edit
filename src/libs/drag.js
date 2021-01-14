@@ -197,10 +197,11 @@ function scale(e) {
 
 /**
  * Return map of transform matrix for selection
+ * @param {SVGElement[]} [elements]
  */
-function getSelectionTransformMap() {
+function getSelectionTransformMap(elements) {
     let map = new Map();
-    current.editor.selection.forEach(item => {
+    (elements || current.editor.selection).forEach(item => {
         map.set(item, matrixGetTranformForElement(item));
     });
     return map;
@@ -227,6 +228,28 @@ function transformHelper(editor, matrix) {
         points[i] = pointApplyMatrix(point, matrix);
     });
     helperCreateByPoints(editor, points);
+}
+
+/**
+ * Transform elements
+ * @param {Editor} editor 
+ * @param {SVGElement[]} elements
+ * @param {DOMMatrix} matrix 
+ */
+export function transformElements(editor, elements, matrix) {
+    let prev = getSelectionTransformMap(elements);
+    elements.forEach(item => {
+        setTransform(item, matrixCreate().multiplySelf(matrix).multiplySelf(prev.get(item)));
+    });
+    if (editor.historyPush) {
+        editor.historyPush({
+            undo,
+            redo,
+            prev,
+            next: getSelectionTransformMap(elements),
+        });
+    }
+    editor.refreshHelper();
 }
 
 /**

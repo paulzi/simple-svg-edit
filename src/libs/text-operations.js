@@ -1,7 +1,15 @@
 import {createElement, listToArray} from './misc';
 import {Editor} from '../classes/Editor';
 
-Editor.prototype.textSetStyle = setStyle;
+/**
+ * Set style of selected text
+ * @param {Function} callback
+ */
+Editor.prototype.textSetStyle = function(callback) {
+    let list = normalizeSelection();
+    list.forEach(callback);
+    joinSpan(list);
+};
 
 /**
  * @returns {Element[]}
@@ -55,14 +63,4 @@ function joinSpan(list) {
             item.parentNode.removeChild(item);
         }
     });
-}
-
-/**
- * Set style of selected text
- * @param {Function} callback
- */
-function setStyle(callback) {
-    let list = normalizeSelection();
-    list.forEach(callback);
-    joinSpan(list);
 }

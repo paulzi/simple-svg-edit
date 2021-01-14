@@ -8,3 +8,4 @@ import './insert-text';
 import './insert-image';
 import './bottom-widget';
 import './history';
+import './align';

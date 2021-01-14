@@ -1,7 +1,7 @@
 import eventContext from '../libs/event-context';
 import {createElement} from '../libs/misc';
 import {helperCreate, helperRemove} from '../libs/helper';
-import {dragRegister} from '../libs/drag';
+import {dragRegister, transformElements} from '../libs/drag';
 
 // minify
 const doc = document;
@@ -102,7 +102,7 @@ function onClick(e) {
     let editor = el && Editor.getInstance(el);
     if (editor) {
         el = eventContext(e, `${sel}__delete`);
-        el && editor.deleteSelectedElements();
+        el && editor.deleteSelection();
     }
 }
 
@@ -207,12 +207,30 @@ export class Editor {
     }
 
     /**
-     * Delete current selected elements
+     * Transform selection
+     * @param {SVGElement[]} elements
+     * @param {DOMMatrix} matrix
      */
-    deleteSelectedElements() {
+    transformElements(elements, matrix) {
+        transformElements(editor, elements, matrix);
+    }
+
+    /**
+     * Transform selection
+     * @param {DOMMatrix} matrix 
+     */
+    transformSelection(matrix) {
+        transformElements(editor, editor.selection, matrix);
+    }
+
+    /**
+     * Delete elements
+     * @param {SVGElement[]} elements
+     */
+    deleteElements(elements) {
         helperRemove(this);
         let list = [];
-        this.selection.forEach(item => {
+        elements.forEach(item => {
             list.push({
                 element: item,
                 parent: item.parentNode,
@@ -224,7 +242,15 @@ export class Editor {
         if (this.historyPush) {
             this.historyPush({undo: undoDelete, redo: redoDelete, list});
         }
-        this.selection = [];
+        this.selection = this.selection.filter(item => elements.indexOf(item) === -1);
+        this.refreshHelper();
+    }
+
+    /**
+     * Delete current selected elements
+     */
+    deleteSelection() {
+        this.deleteElements(this.selection);
     }
 
     /**
