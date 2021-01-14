@@ -33,6 +33,9 @@ Editor.prototype.insertImageUrl = function(url, params = {}) {
             image.setAttribute('height', h);
         }
         editor.selectElement(image);
+        if (editor.historyPush) {
+            editor.historyPush({undo, redo, element, context});
+        }
     };
     image.setAttribute('href', url);
     return image;
@@ -64,3 +67,23 @@ Editor.prototype.insertImageUpload = function(params = {}) {
     };
     input.click();
 };
+
+/**
+ * @param {Editor} editor 
+ * @param {Object} data 
+ */
+function undo(editor, data) {
+    data.element.parentNode.removeChild(data.element);
+    editor.selectElement(null);
+    editor.refreshHelper();
+}
+
+/**
+ * @param {Editor} editor 
+ * @param {Object} data 
+ */
+function redo(editor, data) {
+    data.context.appendChild(data.element);
+    editor.selectElement(null);
+    editor.refreshHelper();
+}

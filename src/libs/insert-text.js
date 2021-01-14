@@ -38,5 +38,28 @@ Editor.prototype.insertText = function(text, params = {}) {
         });
     }
     editor.selectElement(element);
+    if (editor.historyPush) {
+        editor.historyPush({undo, redo, element, context});
+    }
     return element;
 };
+
+/**
+ * @param {Editor} editor 
+ * @param {Object} data 
+ */
+function undo(editor, data) {
+    data.element.parentNode.removeChild(data.element);
+    editor.selectElement(null);
+    editor.refreshHelper();
+}
+
+/**
+ * @param {Editor} editor 
+ * @param {Object} data 
+ */
+function redo(editor, data) {
+    data.context.appendChild(data.element);
+    editor.selectElement(null);
+    editor.refreshHelper();
+}

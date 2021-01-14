@@ -57,6 +57,31 @@ function refreshRootViewBox(root) {
 }
 
 /**
+ * @param {Editor} editor
+ * @param {Object} data
+ */
+function undoDelete(editor, data) {
+    data.list.forEach(item => {
+        item.parent.insertBefore(item.element, item.before);
+    });
+    editor.selectElement(null);
+    editor.refreshHelper();
+}
+
+/**
+ * @param {Editor} editor
+ * @param {Object} data
+ */
+function redoDelete(editor, data) {
+    data.list.forEach(item => {
+        let element = item.element;
+        element.parentNode.removeChild(element);
+    });
+    editor.selectElement(null);
+    editor.refreshHelper();
+}
+
+/**
  * Register event listeners
  */
 function registerListeners() {
@@ -186,9 +211,19 @@ export class Editor {
      */
     deleteSelectedElements() {
         helperRemove(this);
+        let list = [];
         this.selection.forEach(item => {
+            list.push({
+                element: item,
+                parent: item.parentNode,
+                before: item.nextSibling,
+            });
             item.parentNode.removeChild(item);
         });
+        list = list.sort((a, b) => b.nextSibling === a ? 1 : 0);
+        if (this.historyPush) {
+            this.historyPush({undo: undoDelete, redo: redoDelete, list});
+        }
         this.selection = [];
     }
 
