@@ -478,8 +478,8 @@ function dragTextWidth(e, current) {
     let editor = current.editor;
     let point = pointCenter([editor.helperPoints[0], editor.helperPoints[3]]);
     point = unitsRootToViewport(editor, point);
-    let r1 = pointDistance(pointCreate(e.clientX, e.clientY), point);
-    let r0 = pointDistance(pointCreate(current.x, current.y), point);
+    let r1 = pointDistance(current.current, point);
+    let r0 = pointDistance(current.start, point);
     let scale = r1 / r0;
     if (current.initialWidth === undefined) {
         let bound = editor.foreign.getBBox();

@@ -21,9 +21,9 @@ export function dragRegister() {
     addEventListener.call(doc, 'mousedown',  onMouseDown);
     addEventListener.call(doc, 'mousemove',  onMouseMove);
     addEventListener.call(doc, 'mouseup',    onMouseUp);
-    addEventListener.call(doc, 'touchstart', onMouseDown);
-    addEventListener.call(doc, 'touchmove',  onMouseMove);
-    addEventListener.call(doc, 'touchend',   onMouseUp);
+    addEventListener.call(doc, 'touchstart', onMouseDown, {passive: false});
+    addEventListener.call(doc, 'touchmove',  onMouseMove, true);
+    addEventListener.call(doc, 'touchend',   onMouseUp,   true);
 }
 
 /**
@@ -56,6 +56,17 @@ function onMouseUp(e) {
 }
 
 /**
+ * Return click/touch coordinate
+ * @param {Event} e 
+ * @returns {DOMPoint}
+ */
+function getEventPoint(e) {
+    let touches = e.changedTouches;
+    let storage = touches && touches[0] ? touches[0] : e;
+    return pointCreate(storage.clientX, storage.clientY);
+}
+
+/**
  * Start drag
  * @param {MouseEvent|TouchEvent} e 
  * @param {Editor} editor
@@ -76,10 +87,10 @@ function start(e, editor) {
     let prevented = editor.triggerEvent('DragStart', detail);
     operation = detail.operation;
     if (!prevented && operation) {
+        e.preventDefault();
         current = {
             editor,
-            x: e.clientX,
-            y: e.clientY,
+            start: getEventPoint(e),
             operation,
         };
     }
@@ -90,7 +101,14 @@ function start(e, editor) {
  * @param {MouseEvent|TouchEvent} e 
  */
 function drag(e) {
+    current.current = getEventPoint(e);
     current.operation(e, current);
+    let target = e.target;
+    if (!doc.contains(target)) {
+        current.saveTarget = target;
+        target.style.visibility = 'hidden';
+        document.body.appendChild(target);
+    }
 }
 
 /**
@@ -99,6 +117,7 @@ function drag(e) {
  */
 function end(e) {
     let editor = current.editor;
+    current.current = getEventPoint(e);
     current.operation(e, current);
     if (editor.historyPush && current.matrix) {
         editor.historyPush({
@@ -113,17 +132,20 @@ function end(e) {
         operation: current.operation,
     });
     !prevented && editor.refreshHelper();
+    let saveTarget = current.saveTarget;
+    if (saveTarget) {
+        saveTarget.parentNode.removeChild(saveTarget);
+    }
     current = null;
 }
 
 /**
  * Move operation
- * @param {MouseEvent|TouchEvent} e 
  */
-function move(e) {
+function move() {
     let editor = current.editor;
-    let dx = e.clientX - current.x;
-    let dy = e.clientY - current.y;
+    let dx = current.current.x - current.start.x;
+    let dy = current.current.y - current.start.y;
     let local = unitsRootToLocal(editor, rectCreate(0, 0, dx, dy));
     saveMatrix();
     editor.selection.forEach(item => {
@@ -137,15 +159,14 @@ function move(e) {
 
 /**
  * Rotate operation
- * @param {MouseEvent|TouchEvent} e 
  */
-function rotate(e) {
+function rotate() {
     let editor = current.editor;
     let cr = pointGetCenter(editor.helperPoints);
     let cv = unitsRootToViewport(editor, cr);
     let cl = unitsRootToLocal(editor, cr);
-    let a  = Math.atan2(cv.y - e.clientY, e.clientX - cv.x);
-    a -= Math.atan2(cv.y - current.y, current.x - cv.x);
+    let a  = Math.atan2(cv.y - current.current.y, current.current.x - cv.x);
+    a -= Math.atan2(cv.y - current.start.y, current.start.x - cv.x);
     if (a < -Math.PI) {
         a += 2 * Math.PI;
     }
@@ -168,15 +189,14 @@ function rotate(e) {
 
 /**
  * Scale operation
- * @param {MouseEvent|TouchEvent} e 
  */
-function scale(e) {
+function scale() {
     let editor = current.editor;
     let cr = pointGetCenter(editor.helperPoints);
     let cv = unitsRootToViewport(editor, cr);
     let cl = unitsRootToLocal(editor, cr);
-    let r1 = pointDistance(pointCreate(e.clientX, e.clientY), cv);
-    let r0 = pointDistance(pointCreate(current.x, current.y), cv);
+    let r1 = pointDistance(current.current, cv);
+    let r0 = pointDistance(current.start, cv);
     let scale = r1 / r0;
     saveMatrix();
     editor.selection.forEach(item => {
