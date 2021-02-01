@@ -104,7 +104,7 @@ function drag(e) {
     current.current = getEventPoint(e);
     current.operation(e, current);
     let target = e.target;
-    if (!doc.contains(target)) {
+    if (!current.saveTarget) {
         current.saveTarget = target;
         target.style.visibility = 'hidden';
         document.body.appendChild(target);

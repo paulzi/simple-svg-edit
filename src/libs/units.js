@@ -9,7 +9,7 @@ import {rectCreate} from  './rect';
  */
 export function unitsViewportToRoot(editor, value) {
     let rBound = editor.root.getBoundingClientRect();
-    if (value.width) {
+    if (value.width !== undefined) {
         return rectCreate(value.x - rBound.x, value.y - rBound.y, value.width, value.height);
     }
     return pointCreate(value.x - rBound.x, value.y - rBound.y);
@@ -23,7 +23,7 @@ export function unitsViewportToRoot(editor, value) {
  */
 export function unitsRootToViewport(editor, value) {
     let rBound = editor.root.getBoundingClientRect();
-    if (value.width) {
+    if (value.width !== undefined) {
         return rectCreate(value.x + rBound.x, value.y + rBound.y, value.width, value.height);
     }
     return pointCreate(value.x + rBound.x, value.y + rBound.y);
@@ -52,7 +52,7 @@ export function unitsRootToLocal(editor, value) {
     let dy     = (vbRoot.height - rh) / 2;
     let scaleX = vbSvg.width  / rw;
     let scaleY = vbSvg.height / rh;
-    if (value.width) {
+    if (value.width !== undefined) {
         return rectCreate((value.x - dx) * scaleX, (value.y - dy) * scaleY, value.width * scaleX, value.height * scaleY);
     }
     return pointCreate((value.x - dx) * scaleX, (value.y - dy) * scaleY);
@@ -81,7 +81,7 @@ export function unitsLocalToRoot(editor, value) {
     let dy     = (vbRoot.height - rh) / 2;
     let scaleX = vbSvg.width  / rw;
     let scaleY = vbSvg.height / rh;
-    if (value.width) {
+    if (value.width !== undefined) {
         return rectCreate(value.x / scaleX + dx, value.y / scaleY + dy, value.width / scaleX, value.height / scaleY);
     }
     return pointCreate(value.x / scaleX + dx, value.y / scaleY + dy);
