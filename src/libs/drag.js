@@ -83,7 +83,7 @@ function start(e, editor) {
     if (eventContext(e, `${sel}__scale`)) {
         operation = scale;
     }
-    let detail = {operation, event: e};
+    let detail = {operation, event: e, params: {}};
     let prevented = editor.triggerEvent('DragStart', detail);
     operation = detail.operation;
     if (!prevented && operation) {
@@ -92,6 +92,7 @@ function start(e, editor) {
             editor,
             start: getEventPoint(e),
             operation,
+            params: detail.params,
         };
     }
 }
@@ -101,7 +102,15 @@ function start(e, editor) {
  * @param {MouseEvent|TouchEvent} e 
  */
 function drag(e) {
+    let editor = current.editor;
     current.current = getEventPoint(e);
+    let detail = {
+        operation: current.operation,
+        event: e,
+        params: {},
+    };
+    editor.triggerEvent('Drag', detail);
+    Object.assign(current.params, detail.params);
     current.operation(e, current);
     let target = e.target;
     if (!current.saveTarget) {
@@ -118,7 +127,6 @@ function drag(e) {
 function end(e) {
     let editor = current.editor;
     current.current = getEventPoint(e);
-    current.operation(e, current);
     if (editor.historyPush && current.matrix) {
         editor.historyPush({
             undo,
@@ -127,10 +135,14 @@ function end(e) {
             next: getSelectionTransformMap(),
         });
     }
-    let prevented = editor.triggerEvent('DragEnd', {
+    let detail = {
         event: e,
         operation: current.operation,
-    });
+        params: {},
+    };
+    let prevented = editor.triggerEvent('DragEnd', detail);
+    Object.assign(current.params, detail.params);
+    current.operation(e, current);
     !prevented && editor.refreshHelper();
     let saveTarget = current.saveTarget;
     if (saveTarget) {
@@ -195,22 +207,44 @@ function scale() {
     let cr = pointGetCenter(editor.helperPoints);
     let cv = unitsRootToViewport(editor, cr);
     let cl = unitsRootToLocal(editor, cr);
-    let r1 = pointDistance(current.current, cv);
-    let r0 = pointDistance(current.start, cv);
-    let scale = r1 / r0;
+    let scaleX, scaleY, angle;
     saveMatrix();
+    if (current.params.changeAspectRatio) {
+        if (editor.selection.length === 1) {
+            let matrix = current.matrix.get(editor.selection[0]);
+            angle = Math.atan2(-matrix.b, matrix.a) * 180 / Math.PI;
+        } else {
+            angle = 0;
+        }
+        let matrix = matrixCreate()
+            .rotateSelf(angle)
+            .translateSelf(-cv.x, -cv.y);
+        let cur   = pointApplyMatrix(current.current, matrix);
+        let start = pointApplyMatrix(current.start, matrix);
+        scaleX = cur.x / start.x;
+        scaleY = cur.y / start.y;
+    } else {
+        let r1 = pointDistance(current.current, cv);
+        let r0 = pointDistance(current.start, cv);
+        scaleX = scaleY = r1 / r0;
+        angle  = 0;
+    }
     editor.selection.forEach(item => {
         let matrix = current.matrix.get(item);
         matrix = matrixCreate()
             .translateSelf(cl.x, cl.y)
-            .scaleSelf(scale)
+            .rotateSelf(-angle)
+            .scaleSelf(scaleX, scaleY)
+            .rotateSelf(angle)
             .translateSelf(-cl.x, -cl.y)
             .multiplySelf(matrix);
         setTransform(item, matrix);
     });
     let matrix = matrixCreate()
         .translateSelf(cr.x, cr.y)
-        .scaleSelf(scale)
+        .rotateSelf(-angle)
+        .scaleSelf(scaleX, scaleY)
+        .rotateSelf(angle)
         .translateSelf(-cr.x, -cr.y);
     transformHelper(editor, matrix);
 }
