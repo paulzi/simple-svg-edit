@@ -148,6 +148,7 @@ function end(e) {
     if (saveTarget) {
         saveTarget.parentNode.removeChild(saveTarget);
     }
+    editor.triggerEvent('DragComplete', detail);
     current = null;
 }
 
