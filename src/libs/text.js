@@ -1,7 +1,7 @@
 import eventContext from './event-context';
 import {createElement, setTransform, listToArray} from './misc';
 import {helperRemove, helperGetPointsForItem} from './helper';
-import {pointCreate, pointCenter, pointDistance} from './point';
+import {pointCreate, pointGetCenter, pointDistance} from './point';
 import {unitsRootToViewport} from './units';
 import {Editor, settings} from '../classes/Editor';
 
@@ -476,7 +476,7 @@ function textHelperUpdate(editor) {
  */
 function dragTextWidth(e, current) {
     let editor = current.editor;
-    let point = pointCenter([editor.helperPoints[0], editor.helperPoints[3]]);
+    let point = pointGetCenter([editor.helperPoints[0], editor.helperPoints[3]]);
     point = unitsRootToViewport(editor, point);
     let r1 = pointDistance(current.current, point);
     let r0 = pointDistance(current.start, point);

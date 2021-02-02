@@ -11,21 +11,6 @@ export function pointCreate(x, y) {
 }
 
 /**
- * @param {DOMPoint[]} list
- * @returns {DOMPoint}
- */
-export function pointCenter(list) {
-    let result = pointCreate();
-    list.forEach(item => {
-        result.x += item.x;
-        result.y += item.y;
-    });
-    result.x /= list.length;
-    result.y /= list.length;
-    return result;
-}
-
-/**
  * @param {DOMPoint} a 
  * @param {DOMPoint} b 
  * @returns {Number}
