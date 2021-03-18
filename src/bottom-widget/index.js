@@ -96,9 +96,9 @@ function onInited(e) {
  * @returns {Object}
  */
 function findArea(sel, editor) {
-    let zone = editor.svg.querySelector(sel + '__area-zone');
+    let zone = editor.svg.querySelector(sel + '__zone');
     return {
-        context: editor.svg.querySelector(sel + '__area'),
+        context: editor.svg.querySelector(sel + '__zone > g'),
         bound:   zone && zone.getBBox(),
     };
 }
