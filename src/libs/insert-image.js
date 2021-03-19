@@ -49,12 +49,13 @@ Editor.prototype.insertImageUpload = function(params = {}) {
     input.type = 'file';
     input.onchange = () => {
         let file = input.files[0];
-        let fileFilter = params.fileFilter;
-        if (fileFilter) {
-            file = fileFilter(file, params);
-        }
+        let detail = {file};
+        this.triggerEvent('ImageUpload', detail);
+        file = detail.file;
         if (file) {
-            if (params.blobUrl) {
+            if (typeof file === 'string') {
+                this.insertImageUrl(file, params);
+            } else if (params.blobUrl) {
                 this.insertImageUrl(URL.createObjectURL(file), params);
             } else {
                 var reader = new FileReader();
