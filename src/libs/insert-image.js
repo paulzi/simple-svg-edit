@@ -34,7 +34,7 @@ Editor.prototype.insertImageUrl = function(url, params = {}) {
         }
         editor.selectElement(image);
         if (editor.historyPush) {
-            editor.historyPush({undo, redo, element, context});
+            editor.historyPush({undo, redo, element: image, context});
         }
     };
     image.setAttribute('href', url);
