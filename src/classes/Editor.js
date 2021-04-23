@@ -163,6 +163,13 @@ export class Editor {
     }
 
     /**
+     * Refresh after change svg size
+     */
+    refresh() {
+        refreshRootViewBox(this.root);
+    }
+
+    /**
      * Destroy editor and apply changes
      */
     destroy() {
