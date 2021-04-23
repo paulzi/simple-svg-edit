@@ -167,7 +167,7 @@ export class Editor {
      */
     destroy() {
         instances.delete(this.root);
-        this.root.parentNode.replaceChild(this.svg);
+        this.root.parentNode.replaceChild(this.svg, this.root);
     }
 
     /**
