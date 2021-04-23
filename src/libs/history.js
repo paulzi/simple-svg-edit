@@ -28,14 +28,28 @@ function onClick(e) {
 }
 
 /**
+ * @param {Editor} editor 
+ * @returns {Object}
+ */
+function getEventDetail(editor) {
+    return {
+        position: editor._historyPos,
+        length: editor._history.length,
+    };
+}
+
+/**
  * @param {Object} item
  */
 Editor.prototype.historyPush = function(item) {
-    let cur = this._history    || [];
-    let pos = this._historyPos || 0;
+    let editor = this;
+    let cur = editor._history    || [];
+    let pos = editor._historyPos || 0;
     cur.splice(pos);
-    this._history    = cur;
-    this._historyPos = cur.push(item);
+    editor._history    = cur;
+    editor._historyPos = cur.push(item);
+    editor.triggerEvent('HistoryPush', getEventDetail(editor));
+    editor.triggerEvent('Changed');
 };
 
 /**
@@ -46,6 +60,8 @@ Editor.prototype.undo = function() {
     if (item) {
         item.undo(editor, item);
         editor._historyPos--;
+        editor.triggerEvent('HistoryUndo', getEventDetail(editor));
+        editor.triggerEvent('Changed');
     }
 };
 
@@ -57,5 +73,7 @@ Editor.prototype.redo = function() {
     if (item) {
         item.redo(editor, item);
         editor._historyPos++;
+        editor.triggerEvent('HistoryRedo', getEventDetail(editor));
+        editor.triggerEvent('Changed');
     }
 };
