@@ -9,7 +9,7 @@ const doc = document;
  * Register widget listener
  */
 export function bottomWidgetRegister() {
-    doc.addEventListener.call('click', onClick);
+    doc.addEventListener('click', onClick);
     Editor.events.addEventListener('inited', onInited);
 }
 
