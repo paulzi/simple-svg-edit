@@ -32,9 +32,11 @@ Editor.prototype.insertImageUrl = function(url, params = {}) {
             image.setAttribute('width',  w);
             image.setAttribute('height', h);
         }
-        editor.selectElement(image);
         if (editor.historyPush) {
             editor.historyPush({undo, redo, element: image, context});
+        }
+        if (params.selectAfterInsert) {
+            editor.selectElement(image);
         }
     };
     img.src = url;

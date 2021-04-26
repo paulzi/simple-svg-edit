@@ -20,15 +20,16 @@ export const settings = {
  * @param {Editor} editor
  * @param {String} type
  * @param {?Object} [detail]
+ * @param {?EventTarget} [target]
  * @returns {Boolean}
  */
-function triggerEvent(editor, type, detail) {
-    let event = new CustomEvent(settings.base + type, {
+function triggerEvent(editor, type, detail, target) {
+    let event = new CustomEvent(target ? type : settings.base + type, {
         bubbles: true,
         cancelable: true,
         detail: Object.assign(detail || {}, {editor}),
     });
-    editor.root.dispatchEvent(event);
+    (target || editor.root).dispatchEvent(event);
     return event.defaultPrevented;
 }
 
@@ -159,6 +160,7 @@ export class Editor {
         this.selection = [];
         registerListeners();
         refreshRootViewBox(this.root);
+        triggerEvent(this, 'inited', params, Editor.events);
         triggerEvent(this, 'Inited', params);
     }
 
@@ -167,6 +169,7 @@ export class Editor {
      */
     refresh() {
         refreshRootViewBox(this.root);
+        this.refreshHelper();
     }
 
     /**
@@ -269,3 +272,5 @@ export class Editor {
         return instances.get(el);
     }
 }
+
+Editor.events = doc.createTextNode(null);

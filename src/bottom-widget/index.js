@@ -9,10 +9,8 @@ const doc = document;
  * Register widget listener
  */
 export function bottomWidgetRegister() {
-    const base = settings.base;
-    const addEventListener = doc.addEventListener;
-    addEventListener.call(doc, 'click',         onClick);
-    addEventListener.call(doc, `${base}Inited`, onInited);
+    doc.addEventListener.call('click', onClick);
+    Editor.events.addEventListener('inited', onInited);
 }
 
 /**
@@ -98,7 +96,8 @@ function onInited(e) {
 function findArea(sel, editor) {
     let zone = editor.svg.querySelector(sel + '__zone');
     return {
-        context: editor.svg.querySelector(sel + '__zone > g'),
-        bound:   zone && zone.getBBox(),
+        context:           editor.svg.querySelector(sel + '__zone > g'),
+        bound:             zone && zone.getBBox(),
+        selectAfterInsert: true,
     };
 }
