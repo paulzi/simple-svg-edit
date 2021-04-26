@@ -9,7 +9,8 @@ import {Editor} from '../classes/Editor';
 Editor.prototype.insertImageUrl = function(url, params = {}) {
     let editor = this;
     let image = createElement('image', true);
-    image.onload = function() {
+    let img = new Image();
+    img.onload = function() {
         ['x', 'y', 'width', 'height'].forEach(attr => {
             if (params[attr] !== undefined) {
                 image.setAttribute(attr, params[attr]);
@@ -21,10 +22,9 @@ Editor.prototype.insertImageUrl = function(url, params = {}) {
         context.appendChild(image);
         let bound = params.bound;
         if (bound) {
-            let rect = image.getBBox();
-            let scale = Math.min(bound.width / rect.width, bound.height / rect.height);
-            let w = rect.width  * scale;
-            let h = rect.height * scale;
+            let scale = Math.min(bound.width / img.naturalWidth, bound.height / img.naturalHeight);
+            let w = img.naturalWidth  * scale;
+            let h = img.naturalHeight * scale;
             let x = bound.x + (bound.width  - w) / 2;
             let y = bound.y + (bound.height - h) / 2;
             image.setAttribute('x',      x);
@@ -37,6 +37,7 @@ Editor.prototype.insertImageUrl = function(url, params = {}) {
             editor.historyPush({undo, redo, element: image, context});
         }
     };
+    img.src = url;
     image.setAttribute('href', url);
     return image;
 };
