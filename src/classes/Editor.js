@@ -222,7 +222,7 @@ export class Editor {
      * @param {DOMMatrix} matrix
      */
     transformElements(elements, matrix) {
-        transformElements(editor, elements, matrix);
+        transformElements(this, elements, matrix);
     }
 
     /**
@@ -230,7 +230,7 @@ export class Editor {
      * @param {DOMMatrix} matrix 
      */
     transformSelection(matrix) {
-        transformElements(editor, editor.selection, matrix);
+        transformElements(this, this.selection, matrix);
     }
 
     /**
