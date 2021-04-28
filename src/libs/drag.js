@@ -1,8 +1,8 @@
 import {Editor, settings} from '../classes/Editor';
 import eventContext from './event-context';
-import {unitsRootToLocal, unitsRootToViewport} from './units';
+import {unitsRootToLocal, unitsRootToViewport, unitsViewportToLocal} from './units';
 import {pointCreate, pointDistance, pointGetCenter, pointApplyMatrix} from './point';
-import {rectCreate} from './rect';
+import {rectCreate, rectBoundingClientRectMultiple, rectCenter} from './rect';
 import {matrixCreate, matrixGetTranformForElement} from './matrix';
 import {helperRemove, helperCreateByPoints} from './helper';
 import {setTransform} from './misc';
@@ -289,12 +289,35 @@ function transformHelper(editor, matrix) {
  * Transform elements
  * @param {Editor} editor 
  * @param {SVGElement[]} elements
- * @param {DOMMatrix} matrix 
+ * @param {DOMMatrix|null} matrix
+ * @param {DOMMatrix|true|null} [preMatrix]
  */
-export function transformElements(editor, elements, matrix) {
+export function transformElements(editor, elements, matrix, preMatrix) {
+    let center;
     let prev = getSelectionTransformMap(elements);
+    if (matrix) {
+        let bound = rectBoundingClientRectMultiple(elements);
+        center = unitsViewportToLocal(editor, rectCenter(bound));
+    }
     elements.forEach(item => {
-        setTransform(item, matrixCreate().multiplySelf(matrix).multiplySelf(prev.get(item)));
+        if (preMatrix !== true) {
+            let newMatrix = matrixCreate();
+            if (matrix) {
+                newMatrix
+                    .translateSelf(center.x, center.y)
+                    .multiplySelf(matrix)
+                    .translateSelf(-center.x, -center.y);
+            }
+            newMatrix.multiplySelf(prev.get(item));
+            if (preMatrix) {
+                let point = rectCenter(item.getBBox());
+                newMatrix.translateSelf(point.x, point.y);
+                newMatrix.multiplySelf(preMatrix);
+                newMatrix.translateSelf(-point.x, -point.y);
+            }
+            matrix = newMatrix;
+        }
+        setTransform(item, matrix);
     });
     if (editor.historyPush) {
         editor.historyPush({

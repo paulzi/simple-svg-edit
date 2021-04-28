@@ -9,3 +9,4 @@ import './insert-image';
 import './bottom-widget';
 import './history';
 import './align';
+import './transform-helper';

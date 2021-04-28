@@ -217,20 +217,30 @@ export class Editor {
     }
 
     /**
+     * @param {SVGElement} element 
+     * @param {DOMMatrix} matrix 
+     */
+    setTransform(element, matrix) {
+        transformElements(this, [element], matrix, true);
+    }
+
+    /**
      * Transform selection
      * @param {SVGElement[]} elements
      * @param {DOMMatrix} matrix
+     * @param {DOMMatrix} [preMatrix]
      */
-    transformElements(elements, matrix) {
-        transformElements(this, elements, matrix);
+    transformElements(elements, matrix, preMatrix) {
+        transformElements(this, elements, matrix, preMatrix);
     }
 
     /**
      * Transform selection
      * @param {DOMMatrix} matrix 
+     * @param {DOMMatrix} [preMatrix]
      */
-    transformSelection(matrix) {
-        transformElements(this, this.selection, matrix);
+    transformSelection(matrix, preMatrix) {
+        transformElements(this, this.selection, matrix, preMatrix);
     }
 
     /**

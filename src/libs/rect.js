@@ -18,6 +18,15 @@ export function rectCreate(x, y, width, height) {
 }
 
 /**
+ * Get center point from rect
+ * @param {DOMRect} rect
+ * @returns {DOMPoint}
+ */
+ export function rectCenter(rect) {
+    return pointCreate(rect.x + rect.width / 2, rect.y + rect.height / 2);
+}
+
+/**
  * Get array of corner points from rect
  * @param {DOMRect} rect
  * @returns {DOMPoint[]}
