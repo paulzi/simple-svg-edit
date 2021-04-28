@@ -2,6 +2,8 @@ import eventContext from '../libs/event-context';
 import {createElement} from '../libs/misc';
 import {helperCreate, helperRemove} from '../libs/helper';
 import {dragRegister, transformElements} from '../libs/drag';
+import { rectBoundingClientRectMultiple } from '../libs/rect';
+import { unitsViewportToLocal } from '../libs/units';
 
 // minify
 const doc = document;
@@ -214,6 +216,15 @@ export class Editor {
             helperRemove(this);
             helperCreate(this);
         }
+    }
+
+    /**
+     * @param {SVGElement[]} elements 
+     * @returns {DOMRect}
+     */
+    getBoundingBox(elements) {
+        let bound = rectBoundingClientRectMultiple(elements);
+        return unitsViewportToLocal(this, bound);
     }
 
     /**
