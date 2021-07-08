@@ -42,10 +42,11 @@ export function rectCorners(rect) {
 
 /**
  * Get bounding client rect for multiple elements
- * @param {Element[]} list 
+ * @param {Element[]} list
+ * @param {Boolean} [useBBox]
  * @returns {DOMRect}
  */
-export function rectBoundingClientRectMultiple(list) {
+ export function rectBoundingClientRectMultiple(list, useBBox) {
     let max = {};
     let map = [
         ['x',  bound => bound.x],
@@ -54,7 +55,7 @@ export function rectBoundingClientRectMultiple(list) {
         ['y2', bound => bound.y + bound.height],
     ];
     list.forEach(item => {
-        let bound = item.getBoundingClientRect();
+        let bound = useBBox ? item.getBBox() : item.getBoundingClientRect();
         map.forEach(([prop, fn]) => {
             let v = fn(bound);
             if (max[prop] === undefined || v < max[prop]) {

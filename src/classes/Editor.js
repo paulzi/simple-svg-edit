@@ -219,12 +219,13 @@ export class Editor {
     }
 
     /**
-     * @param {SVGElement[]} elements 
+     * @param {SVGElement[]} elements
+     * @param {Boolean} [useBBox]
      * @returns {DOMRect}
      */
-    getBoundingBox(elements) {
-        let bound = rectBoundingClientRectMultiple(elements);
-        return unitsViewportToLocal(this, bound);
+     getBoundingBox(elements, useBBox) {
+        let bound = rectBoundingClientRectMultiple(elements, useBBox);
+        return useBBox ? bound : unitsViewportToLocal(this, bound);
     }
 
     /**
