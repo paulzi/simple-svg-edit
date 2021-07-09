@@ -18,7 +18,7 @@ Editor.prototype.insertImageUrl = function(url, params = {}) {
         });
         let context = params.context || editor.svg;
         let beforeInsert = params.beforeInsert;
-        beforeInsert && beforeInsert(image, context, params);
+        beforeInsert && beforeInsert(image, context, img, params);
         context.appendChild(image);
         let bound = params.bound;
         if (bound) {
@@ -35,6 +35,8 @@ Editor.prototype.insertImageUrl = function(url, params = {}) {
         if (editor.historyPush) {
             editor.historyPush({undo, redo, element: image, context});
         }
+        let afterInsert = params.afterInsert;
+        afterInsert && afterInsert(image, context, img, params);
         if (params.selectAfterInsert) {
             editor.selectElement(image);
         }
