@@ -15,7 +15,7 @@ Editor.prototype.insertText = function(text, params = {}) {
     textSet(element, text);
     let context = params.context || editor.svg;
     let beforeInsert = params.beforeInsert;
-    beforeInsert && beforeInsert(image, context, params);
+    beforeInsert && beforeInsert(element, context, params);
     context.appendChild(element);
     let bound = params.bound;
     if (bound) {
