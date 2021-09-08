@@ -44,7 +44,7 @@ function prepareSvg(editor, el) {
     const base = settings.base;
     editor.svg = el;
     let root = editor.root = createElement('svg', true, [base]);
-    root.setAttribute('viewBox', svg.getAttribute('viewBox'));
+    root.setAttribute('viewBox', el.getAttribute('viewBox'));
     el.parentNode.replaceChild(editor.root, el);
     root.appendChild(el);
     editor.helpers = createElement('g', true, [`${base}__helpers`]);
