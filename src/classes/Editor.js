@@ -275,8 +275,11 @@ export class Editor {
         if (this.historyPush) {
             this.historyPush({undo: undoDelete, redo: redoDelete, list});
         }
+        let length = this.selection.length;
         this.selection = this.selection.filter(item => elements.indexOf(item) === -1);
-        this.refreshHelper();
+        if (length !== this.selection.length) {
+            this.selectElement(this.selection[0]);
+        }
     }
 
     /**
