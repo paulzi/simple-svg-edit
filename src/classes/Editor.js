@@ -2,8 +2,8 @@ import eventContext from '../libs/event-context';
 import {createElement} from '../libs/misc';
 import {helperCreate, helperRemove} from '../libs/helper';
 import {dragRegister, transformElements} from '../libs/drag';
-import { rectBoundingClientRectMultiple } from '../libs/rect';
-import { unitsViewportToLocal } from '../libs/units';
+import {rectBoundingClientRectMultiple} from '../libs/rect';
+import {unitsViewportToLocal} from '../libs/units';
 
 // minify
 const doc = document;
@@ -153,8 +153,8 @@ function onResize() {
 
 export class Editor {
     /**
-     * @param {HTMLElement} el
-     * @param {Object} params
+     * @param {SVGSVGElement} el
+     * @param {Object} [params]
      */
     constructor(el, params = {}) {
         prepareSvg(this, el);
@@ -168,11 +168,13 @@ export class Editor {
     }
 
     /**
-     * Refresh after change svg size
+     * Refresh editor
+     * @returns {Editor} this
      */
     refresh() {
         refreshRootViewBox(this.root);
         this.refreshHelper();
+        return this;
     }
 
     /**
@@ -186,7 +188,7 @@ export class Editor {
     /**
      * Trigger editor event and return isDefaultPrevented
      * @param {String} type
-     * @param {?Object} [detail]
+     * @param {Object} [detail]
      * @returns {Boolean}
      */
     triggerEvent(type, detail) {
@@ -195,7 +197,8 @@ export class Editor {
 
     /**
      * Select element
-     * @param {SVGElement|null} el 
+     * @param {?SVGElement} el 
+     * @returns {Boolean}
      */
     selectElement(el) {
         let newSelection = el ? [el] : [];
@@ -207,16 +210,19 @@ export class Editor {
             this.selection = newSelection;
             this.refreshHelper();
         }
+        return prevented;
     }
 
     /**
-     * Refresh helper
+     * Refresh helper position and size
+     * @returns {Editor} this
      */
     refreshHelper() {
         if (!triggerEvent(this, 'RefreshHelper')) {
             helperRemove(this);
             helperCreate(this);
         }
+        return this
     }
 
     /**
@@ -230,35 +236,42 @@ export class Editor {
     }
 
     /**
-     * @param {SVGElement} element 
-     * @param {DOMMatrix} matrix 
+     * @param {SVGElement} element
+     * @param {DOMMatrix} matrix
+     * @returns {Editor} this
      */
     setTransform(element, matrix) {
         transformElements(this, [element], matrix, true);
+        return this;
     }
 
     /**
-     * Transform selection
+     * Transform elements
      * @param {SVGElement[]} elements
      * @param {DOMMatrix} matrix
-     * @param {DOMMatrix} [preMatrix]
+     * @param {?DOMMatrix} [preMatrix]
+     * @returns {Editor} this
      */
     transformElements(elements, matrix, preMatrix) {
         transformElements(this, elements, matrix, preMatrix);
+        return this;
     }
 
     /**
      * Transform selection
      * @param {DOMMatrix} matrix 
      * @param {DOMMatrix} [preMatrix]
+     * @returns {Editor} this
      */
     transformSelection(matrix, preMatrix) {
         transformElements(this, this.selection, matrix, preMatrix);
+        return this;
     }
 
     /**
      * Delete elements
      * @param {SVGElement[]} elements
+     * @returns {Editor} this
      */
     deleteElements(elements) {
         helperRemove(this);
@@ -280,6 +293,7 @@ export class Editor {
         if (length !== this.selection.length) {
             this.selectElement(this.selection[0]);
         }
+        return this;
     }
 
     /**

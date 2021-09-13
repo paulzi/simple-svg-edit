@@ -74,16 +74,20 @@ function getEventPoint(e) {
 function start(e, editor) {
     const sel = '.' + settings.base;
     let operation = null;
+    let type = null;
     if (eventContext(e, `${sel}__move`)) {
         operation = move;
+        type = 'move';
     }
     if (eventContext(e, `${sel}__rotate`)) {
         operation = rotate;
+        type = 'rotate';
     }
     if (eventContext(e, `${sel}__scale`)) {
         operation = scale;
+        type = 'scale';
     }
-    let detail = {operation, event: e, params: {}};
+    let detail = {operation, type, event: e, params: {}};
     let prevented = editor.triggerEvent('DragStart', detail);
     operation = detail.operation;
     if (!prevented && operation) {
@@ -92,6 +96,7 @@ function start(e, editor) {
             editor,
             start: getEventPoint(e),
             operation,
+            type,
             params: detail.params,
         };
     }
@@ -106,6 +111,7 @@ function drag(e) {
     current.current = getEventPoint(e);
     let detail = {
         operation: current.operation,
+        type: current.type,
         event: e,
         params: {},
     };
@@ -114,6 +120,7 @@ function drag(e) {
     current.operation(e, current);
     let target = e.target;
     if (!current.saveTarget) {
+        // save helper in DOM
         current.saveTarget = target;
         target.style.visibility = 'hidden';
         document.body.appendChild(target);
@@ -127,28 +134,35 @@ function drag(e) {
 function end(e) {
     let editor = current.editor;
     current.current = getEventPoint(e);
-    if (editor.historyPush && current.matrix) {
-        editor.historyPush({
-            undo,
-            redo,
-            prev: current.matrix,
-            next: getSelectionTransformMap(),
-        });
-    }
     let detail = {
         event: e,
         operation: current.operation,
+        type: current.type,
         params: {},
     };
-    let prevented = editor.triggerEvent('DragEnd', detail);
-    Object.assign(current.params, detail.params);
-    current.operation(e, current);
-    !prevented && editor.refreshHelper();
     let saveTarget = current.saveTarget;
     if (saveTarget) {
         saveTarget.parentNode.removeChild(saveTarget);
     }
-    editor.triggerEvent('DragComplete', detail);
+    let prevented = editor.triggerEvent('DragEnd', detail);
+    if (prevented) {
+        editor.selection.forEach(item => {
+            setTransform(item, current.matrix.get(item));
+        });
+    } else {
+        Object.assign(current.params, detail.params);
+        current.operation(e, current);
+        editor.refreshHelper();
+        editor.triggerEvent('DragComplete', detail);
+        if (editor.historyPush && current.matrix) {
+            editor.historyPush({
+                undo,
+                redo,
+                prev: current.matrix,
+                next: getSelectionTransformMap(),
+            });
+        }
+    }
     current = null;
 }
 

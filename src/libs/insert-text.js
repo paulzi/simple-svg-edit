@@ -28,7 +28,11 @@ Editor.prototype.insertText = function(text, params = {}) {
             tspan.setAttribute('x', x);
         });
     }
-    editor.selectElement(element);
+    let afterInsert = params.afterInsert;
+    afterInsert && afterInsert(image, context, img, params);
+    if (params.selectAfterInsert) {
+        editor.selectElement(element);
+    }
     if (editor.historyPush) {
         editor.historyPush({undo, redo, element, context});
     }

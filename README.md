@@ -43,90 +43,19 @@ Or just use ready compiled files from folder `dist`:
 
 ## Features
 
-### `editor`
+- `editor` - main functionality editor class;
+- `default-helper` - provide build-in element control helper;
+- `text` - allow to edit text;
+- `default-text-helper` - provide build-in text control helper;
+- `text-align` - allow to change text-align editable `<text>`;
+- `text-operations` - allow to change style of selected text in WYSIWYG text editor;
+- `align` - align objects relative another;
+- `transform-helper` - provide transormation methods;
+- `insert-image` - provide insert image methods;
+- `insert-text` - provide insert text methods;
+- `bottom-widget` - provide build-in insert control widget;
+- `history` - undo/redo;
 
-Main functionality.
+## Documentation
 
-Special css-classes:
-
-`${base}__move` - this class in the helper will move the svg element;
-`${base}__scale` - this class in the helper will scale the svg element;
-`${base}__rotate` - this class in the helper will rotate the svg element;
-`${base}__delete` - this class in the helper will delete the svg element;
-
-Exports:
-
-- `Editor {Editor}` - editor class;
-    - `constructor(el)` - create new `Editor`;
-        - `el {Element}` - editable `<svg>` element;
-    - `root {Element}` - editor `<svg>` element;
-    - `svg {Element}` - editable `<svg>` element;
-    - `helpers {SVGElement}` - element `<g>` of container for helpers;
-    - `helper {SVGElement}` - current element control helper;
-    - `helperPoints {DOMPoint[]}` - current helper corner points;
-    - `selection {SVGElement[]}` - array of selected elements;
-    - `destroy()` - destroy editor;
-    - `triggerEvent(type[, detail])` - trigger new event with custom data;
-        - `type {String}` - type of event;
-        - `detail: {} {Object}` - custom data;
-    - `selectElement(el)` - select element in editable svg;
-        - `el {SVGElement}` - svg element;
-    - `refreshHelper()` - refresh helper position and size;
-    - `deleteSelectedElements()` - delete current selected elements;
-    - `static getInstance(el)` - get `Editor` instance by root editor `<svg>` element;
-- `settings {Object}` - settings
-    - `base: 'sse' {String}` - base namespace of component;
-    - `createHelper: null {?Function(editor, points)}` - your function creating element control helper;
-        - `editor {Editor}` - editor;
-        - `points {DOMPoint[]}` - corner points of element control helper in editor coordinate system;
-
-### `default-helper`
-
-Provide build-in element control helper.
-
-### `text`
-
-Allow to edit text. Required to set `settings.createTextHelper` or include `features/default-text-helper`.
-
-Special css-classes:
-
-`${base}__text` - this class in the helper will start text edit the svg element;
-`${base}__text-width` - this class in the text helper will change text width of svg element.
-
-Extend `Editor`:
-
-- `foreign {SVGElement}` - `<g>` element of WYSIWYG text editor;
-- `foreignObject {SVGElement}` - `<foreignObject>` element of WYSIWYG text editor;
-- `text {SVGElement}` - current editable `<text>`;
-- `textarea {Element}` - `contentEditable` element in `<foreignObject>`.
-
-Extend settings:
-
-- `createTextHelper: null {?Function(editor, points)}` - your function creating text control helper;
-    - `editor {Editor}` - editor;
-    - `points {DOMPoint[]}` - corner points of element control helper in editor coordinate system;
-
-### `default-text-helper`
-
-Provide build-in text control helper.
-
-### `text-align`
-
-Allow to change text-align editable `<text>`.
-
-Special css-classes:
-
-`${base}__align-left` - this class in the text helper will align text to the left;
-`${base}__align-center` - this class in the text helper will align text to the center;
-`${base}__align-right` - this class in the text helper will align text to the right.
-
-### `text-operations`
-
-Allow to change style of selected text in WYSIWYG text editor.
-
-Extend `Editor`:
-
-- `textSetStyle(callback)` - change style of selected text;
-    - `callback(node) {Function}` - callback function called for every selected element;
-        - `node {Element}` - selected element.
-
+[Read documentation](https://github.com/paulzi/simple-svg-edit/blob/master/documentation.md)

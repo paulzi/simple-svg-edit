@@ -121,7 +121,8 @@ Editor.prototype.setSkew = function(element, angle) {
 
 /**
  * @param {SVGElement[]} elements
- * @param {DomPoint} translation
+ * @param {Number} x
+ * @param {Number} y
  * @returns {Editor}
  */
 Editor.prototype.translate = function(elements, x, y) {

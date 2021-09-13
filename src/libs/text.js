@@ -11,8 +11,10 @@ const doc = document;
 const isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1;
 
 /**
+ * Set svg text content via HTML
  * @param {SVGTextElement} element 
  * @param {String} text 
+ * @returns {Editor} this
  */
 Editor.prototype.textSet = function(element, text) {
     let prev = element.innerHTML;
@@ -22,6 +24,7 @@ Editor.prototype.textSet = function(element, text) {
     if (this.historyPush && prev !== next) {
         this.historyPush({undo, redo, text: element, prev, next});
     }
+    return this;
 }
 
 /**

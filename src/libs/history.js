@@ -53,6 +53,7 @@ Editor.prototype.historyPush = function(item) {
 };
 
 /**
+ * @return {Boolean}
  */
 Editor.prototype.undo = function() {
     let editor = this;
@@ -63,9 +64,11 @@ Editor.prototype.undo = function() {
         editor.triggerEvent('HistoryUndo', getEventDetail(editor));
         editor.triggerEvent('Changed');
     }
+    return !!item;
 };
 
 /**
+ * @return {Boolean}
  */
 Editor.prototype.redo = function() {
     let editor = this;
@@ -76,4 +79,5 @@ Editor.prototype.redo = function() {
         editor.triggerEvent('HistoryRedo', getEventDetail(editor));
         editor.triggerEvent('Changed');
     }
+    return !!item;
 };
