@@ -1,6 +1,8 @@
 import {createElement} from './misc';
 import {Editor} from '../classes/Editor';
 
+const isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1;
+
 /**
  * @param   {String} text
  * @param   {Object} [params]
@@ -50,7 +52,12 @@ Editor.prototype.insertImageUrl = function(url, params = {}) {
  * @param {Object} params
  */
 Editor.prototype.insertImageUpload = function(params = {}) {
-    let input = createElement('input');
+    let input;
+    if (isSafari) {
+        input = this.root.querySelector('input[type="file"]') || createElement('input');
+    } else {
+        input = createElement('input');
+    }
     input.type = 'file';
     input.onchange = () => {
         let file = input.files[0];
@@ -71,6 +78,11 @@ Editor.prototype.insertImageUpload = function(params = {}) {
             }
         }
     };
+    if (isSafari) {
+        // hack for iOs safari - onchange is not work if input is not in DOM
+        input.setAttribute('style', 'visibility:hidden;width:0;height:0');
+        this.root.appendChild(input);
+    }
     input.click();
 };
 
