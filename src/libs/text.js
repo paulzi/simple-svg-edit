@@ -310,12 +310,14 @@ function getNodeClientRect(node) {
 function removeManualBr(node) {
     if (node.nodeName === 'BR') {
         let next = node.nextSibling;
-        let bound = getNodeClientRect(next);
-        if (bound) {
-            node.parentNode.removeChild(node);
-            let boundNew = getNodeClientRect(next);
-            if (boundNew.y !== bound.y) {
-                next.parentNode.insertBefore(node, next);
+        if (next !== null) {
+            let bound = getNodeClientRect(next);
+            if (bound) {
+                node.parentNode.removeChild(node);
+                let boundNew = getNodeClientRect(next);
+                if (boundNew.y !== bound.y) {
+                    next.parentNode.insertBefore(node, next);
+                }
             }
         }
     }
@@ -352,7 +354,7 @@ function findAndSplitMultipleLines(node) {
             bound = getTextClientRects(child)[0];
         }
         if (child.nodeType === Node.ELEMENT_NODE) {
-            if (child.nodeName === 'BR') {
+            if (['BR', 'DIV'].indexOf(child.nodeName) !== -1) {
                 prev = null;
             } else {
                 bound = child.getBoundingClientRect();
