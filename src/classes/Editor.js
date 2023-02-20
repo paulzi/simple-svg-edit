@@ -86,6 +86,42 @@ function redoDelete(editor, data) {
 }
 
 /**
+ * @param {SVGElement} node 
+ * @returns {SVGElement|null}
+ */
+function findRootEditable(node) {
+    const base = settings.base;
+    let attr = `data-${base}-editable`;
+    let sel = `[${attr}="true"],[${attr}="1"]`;
+    let next = node.closest(sel);
+    if (!next) {
+        return next;
+    }
+    let cur;
+    do {
+        cur = next;
+        next = cur.parentNode && cur.parentNode.closest(sel);
+    } while (next);
+    return cur;
+}
+
+/**
+ * @param {Editor} editor 
+ * @param {SVGElement} node 
+ * @param {SVGElement} root 
+ * @returns {SVGElement}
+ */
+function findGroup(editor, node, root) {
+    let next = node;
+    let cur;
+    do {
+        cur = next;
+        next = cur.parentNode && cur.parentNode.closest(editor.groupSelector);
+    } while (next && root.contains(next) && root !== next);
+    return cur;
+}
+
+/**
  * Register event listeners
  */
 function registerListeners() {
@@ -129,7 +165,9 @@ function onMouseDown(e) {
             editable = editable && editable.getAttribute(attr);
             if (editable === 'true' || editable === '1') {
                 if (!target.closest('foreignObject')) {
-                    editor.selectElement(target);
+                    let root = findRootEditable(target);
+                    let group = findGroup(editor, target, root);
+                    editor.selectElement(group);
                 }
             } else {
                 editor.selectElement(null);
@@ -161,6 +199,7 @@ export class Editor {
         instances.set(this.root, this);
         this.helper    = null;
         this.selection = [];
+        this.groupSelector = params.groupSelector || 'g';
         registerListeners();
         refreshRootViewBox(this.root);
         triggerEvent(this, 'inited', params, Editor.events);
