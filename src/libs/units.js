@@ -53,9 +53,9 @@ export function unitsRootToLocal(editor, value) {
     let scaleX = vbSvg.width  / rw;
     let scaleY = vbSvg.height / rh;
     if (value.width !== undefined) {
-        return rectCreate((value.x - dx) * scaleX, (value.y - dy) * scaleY, value.width * scaleX, value.height * scaleY);
+        return rectCreate((value.x - dx) * scaleX + vbSvg.x, (value.y - dy) * scaleY + vbSvg.y, value.width * scaleX, value.height * scaleY);
     }
-    return pointCreate((value.x - dx) * scaleX, (value.y - dy) * scaleY);
+    return pointCreate((value.x - dx) * scaleX + vbSvg.x, (value.y - dy) * scaleY + vbSvg.y);
 }
 
 /**
@@ -82,9 +82,9 @@ export function unitsLocalToRoot(editor, value) {
     let scaleX = vbSvg.width  / rw;
     let scaleY = vbSvg.height / rh;
     if (value.width !== undefined) {
-        return rectCreate(value.x / scaleX + dx, value.y / scaleY + dy, value.width / scaleX, value.height / scaleY);
+        return rectCreate((value.x - vbSvg.x) / scaleX + dx, (value.y - vbSvg.y) / scaleY + dy, value.width / scaleX, value.height / scaleY);
     }
-    return pointCreate(value.x / scaleX + dx, value.y / scaleY + dy);
+    return pointCreate((value.x - vbSvg.x) / scaleX + dx, (value.y - vbSvg.y) / scaleY + dy);
 }
 
 /**
