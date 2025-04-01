@@ -74,7 +74,7 @@ Editor.prototype.insertImageUpload = async function(params = {}) {
                 this.insertImageUrl(URL.createObjectURL(file), params);
             } else {
                 var reader = new FileReader();
-                reader.onload = (e) => {
+                reader.onload = () => {
                     this.insertImageUrl(reader.result, params);
                 };
                 reader.readAsDataURL(file);
