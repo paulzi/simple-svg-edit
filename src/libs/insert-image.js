@@ -51,7 +51,7 @@ Editor.prototype.insertImageUrl = function(url, params = {}) {
 /**
  * @param {Object} params
  */
-Editor.prototype.insertImageUpload = function(params = {}) {
+Editor.prototype.insertImageUpload = async function(params = {}) {
     let input;
     if (isSafari) {
         input = this.root.querySelector('input[type="file"]') || createElement('input');
@@ -59,19 +59,22 @@ Editor.prototype.insertImageUpload = function(params = {}) {
         input = createElement('input');
     }
     input.type = 'file';
-    input.onchange = () => {
+    input.onchange = async () => {
         let file = input.files[0];
         let detail = {file};
         this.triggerEvent('ImageUpload', detail);
         file = detail.file;
         if (file) {
+            if (params.afterUpload) {
+                file = await params.afterUpload(file);
+            }
             if (typeof file === 'string') {
                 this.insertImageUrl(file, params);
             } else if (params.blobUrl) {
                 this.insertImageUrl(URL.createObjectURL(file), params);
             } else {
                 var reader = new FileReader();
-                reader.onload = () => {
+                reader.onload = (e) => {
                     this.insertImageUrl(reader.result, params);
                 };
                 reader.readAsDataURL(file);
