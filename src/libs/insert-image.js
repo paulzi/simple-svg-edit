@@ -51,7 +51,7 @@ Editor.prototype.insertImageUrl = function(url, params = {}) {
 /**
  * @param {Object} params
  */
-Editor.prototype.insertImageUpload = async function(params = {}) {
+Editor.prototype.insertImageUpload = function(params = {}) {
     let input;
     if (isSafari) {
         input = this.root.querySelector('input[type="file"]') || createElement('input');
