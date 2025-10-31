@@ -29,7 +29,7 @@ Editor.prototype.insertText = function(text, params = {}) {
         });
     }
     let afterInsert = params.afterInsert;
-    afterInsert && afterInsert(image, context, img, params);
+    afterInsert && afterInsert(element, context, params);
     if (params.selectAfterInsert) {
         editor.selectElement(element);
     }
